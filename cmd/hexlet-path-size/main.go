@@ -1,9 +1,12 @@
 package main
 
 import (
-	"log/slog"
+	"context"
+	"os"
+
+	"github.com/urfave/cli/v3"
 )
 
 func main() {
-	slog.Info("Hello world")
+	(&cli.Command{}).Run(context.Background(), os.Args)
 }
