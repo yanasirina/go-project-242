@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"code/internal/app/actions"
 	"code/internal/pkg/errors"
 	"context"
 	"os"
@@ -9,13 +10,17 @@ import (
 )
 
 type PathSizeCLI struct {
-	command cli.Command
+	command *cli.Command
 }
 
 func NewPathSizeCLI() *PathSizeCLI {
-	command := cli.Command{}
+	cmd := &cli.Command{
+		Name:   "Get Path Size",
+		Usage:  "Command is used to get size of provided file or directory. Command expects path as an argument.",
+		Action: actions.PathSizeAction,
+	}
 
-	return &PathSizeCLI{command: command}
+	return &PathSizeCLI{command: cmd}
 }
 
 func (p *PathSizeCLI) Run() error {
