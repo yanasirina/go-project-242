@@ -9,21 +9,26 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-const HumanFlagName = "human"
+const (
+	HumanFlagName    = "human"
+	ShowAllFilesFlag = "all"
+)
 
 func PathSizeAction(_ context.Context, cmd *cli.Command) error {
+	includeHidden := cmd.Bool(ShowAllFilesFlag)
+	humanize := cmd.Bool(HumanFlagName)
+
 	filePath := cmd.Args().Get(0)
 	if filePath == "" {
 		return ErrBadArguments
 	}
 
-	size, err := service.GetPathSize(filePath)
+	size, err := service.GetPathSize(filePath, includeHidden)
 	if err != nil {
 		return errors.Wrapf(err, "get path size of %s failed", filePath)
 	}
 
-	humanFlag := cmd.Bool(HumanFlagName)
-	formatedSize := formatSize(size, humanFlag)
+	formatedSize := formatSize(size, humanize)
 	fmt.Println(filePath, "-", formatedSize) //nolint:all
 
 	return nil
