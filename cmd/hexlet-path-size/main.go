@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	pathSizeCLI := cli.NewPathSizeCLI()
+	cmd := cli.NewCLICommand()
 
-	err := pathSizeCLI.Run()
+	err := cli.RunCMD(cmd)
 	if err != nil {
 		slog.Error(err.Error())
 	}
