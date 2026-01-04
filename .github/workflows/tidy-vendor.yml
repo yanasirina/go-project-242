@@ -1,0 +1,33 @@
+name: tidy-vendor.yml
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  tidy-vendor:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show git config (origin)
+        run: git config --list --show-origin
+
+      - name: Show git config
+        run: git config --list
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.4'
+
+      - name: Run make tidy-vendor
+        run: make tidy-vendor
+
+      - name: Assert no diff
+        run: bash ${{ github.workspace }}/.github/scripts/assert_no_diff.sh
