@@ -1,0 +1,102 @@
+version: "2"
+run:
+  go: 1.24.7
+  modules-download-mode: vendor
+output:
+  path-mode: abs
+  formats:
+    text:
+      path: stdout
+linters:
+  default: all
+  disable:
+    - noinlineerr
+    - wrapcheck
+    - varnamelen
+    - funlen
+    - paralleltest
+    - exhaustruct
+    - gochecknoglobals
+    - gochecknoinits
+    - ireturn
+    - testpackage
+    - nonamedreturns
+    - tagliatelle
+    - containedctx
+    - wsl
+  settings:
+    revive:
+      rules:
+        - name: context-keys-type
+          disabled: true
+    mnd:
+      ignored-numbers:
+        - "0"
+        - "1"
+        - "2"
+    dupl:
+      threshold: 200
+    errcheck:
+      check-blank: true
+    gocyclo:
+      min-complexity: 7
+    govet:
+      disable:
+        - fieldalignment
+      enable-all: true
+    lll:
+      line-length: 120
+    nakedret:
+      max-func-lines: 60
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - linters:
+          - lll
+        source: '^//go:generate '
+    paths:
+      - _easyjson.go
+      - bin$
+      - api$
+      - build$
+      - configs$
+      - deployments$
+      - docs$
+      - githooks$
+      - init$
+      - third_party$
+      - tools$
+      - vendor$
+      - \.git$
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - _easyjson.go
+      - bin$
+      - api$
+      - build$
+      - configs$
+      - deployments$
+      - docs$
+      - githooks$
+      - init$
+      - third_party$
+      - tools$
+      - vendor$
+      - \.git$
+      - third_party$
+      - builtin$
+      - examples$
