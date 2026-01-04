@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/yanasirina/go-project-242/internal/app/handler"
+	code "github.com/yanasirina/go-project-242"
 	"github.com/yanasirina/go-project-242/internal/pkg/errors"
 
 	"github.com/urfave/cli/v3"
@@ -16,18 +16,12 @@ func RunPathSizeAction(_ context.Context, cmd *cli.Command) error {
 		return ErrBadArguments
 	}
 
-	pathSizeHandler := handler.PathSizeHandler{
-		Arguments: handler.CommandArguments{
-			Path: filePath,
-		},
-		Flags: handler.CommandFlags{
-			HumanizeSize:    cmd.Bool(HumanFlagName),
-			ShowHiddenFiles: cmd.Bool(ShowAllFilesFlag),
-			Recursive:       cmd.Bool(RecursiveFlag),
-		},
-	}
-
-	size, err := pathSizeHandler.GetFormatedSize()
+	size, err := code.GetPathSize(
+		filePath,
+		cmd.Bool(RecursiveFlag),
+		cmd.Bool(HumanFlagName),
+		cmd.Bool(ShowAllFilesFlag),
+	)
 	if err != nil {
 		return errors.Wrapf(err, "get path size of %s failed", filePath)
 	}
