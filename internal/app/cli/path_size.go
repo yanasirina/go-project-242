@@ -22,6 +22,5 @@ func (p *PathSizeCLI) Run() error {
 	if err := p.command.Run(context.Background(), os.Args); err != nil {
 		return errors.Wrap(err, "failed to run command")
 	}
-
 	return nil
 }
