@@ -5,7 +5,7 @@ import (
 	"math"
 )
 
-var sizes = []string{"B", "kB", "MB", "GB", "TB", "PB", "EB"}
+var sizes = []string{"B", "KB", "MB", "GB", "TB", "PB", "EB"}
 
 func logn(n, b float64) float64 {
 	return math.Log(n) / math.Log(b)
@@ -23,11 +23,7 @@ func HumanizeBytes(s int64, base float64) string {
 	var result string
 
 	if val < 10 {
-		if val == float64(int64(val)) {
-			result = fmt.Sprintf("%.0f%s", val, suffix)
-		} else {
-			result = fmt.Sprintf("%.1f%s", val, suffix)
-		}
+		result = fmt.Sprintf("%.1f%s", val, suffix)
 	} else {
 		result = fmt.Sprintf("%.0f%s", val, suffix)
 	}

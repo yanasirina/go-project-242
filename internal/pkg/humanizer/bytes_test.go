@@ -35,7 +35,7 @@ func TestHumanizeBytes(t *testing.T) {
 			name:     "Bytes to kilobytes",
 			input:    1500,
 			base:     1000,
-			expected: "1.5kB",
+			expected: "1.5KB",
 		},
 		{
 			name:     "Kilobytes to megabytes",
@@ -53,19 +53,19 @@ func TestHumanizeBytes(t *testing.T) {
 			name:     "Round values",
 			input:    1000000,
 			base:     1000,
-			expected: "1MB",
+			expected: "1.0MB",
 		},
 		{
 			name:     "Large values",
 			input:    1000000000000,
 			base:     1000,
-			expected: "1TB",
+			expected: "1.0TB",
 		},
 		{
 			name:     "Base 1024",
 			input:    2048,
 			base:     1024,
-			expected: "2kB",
+			expected: "2.0KB",
 		},
 	}
 
