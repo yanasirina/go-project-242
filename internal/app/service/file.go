@@ -3,8 +3,11 @@ package service
 import "os"
 
 type File struct {
-	Path string
 	Info os.FileInfo
+}
+
+func NewFile(info os.FileInfo) *File {
+	return &File{Info: info}
 }
 
 func (file File) GetSize() (int64, error) {

@@ -15,7 +15,7 @@ const (
 
 func NewCLICommand() *cli.Command {
 	cmd := &cli.Command{
-		Name:  "Get Path Size",
+		Name:  "hexlet-path-size",
 		Usage: "Command is used to get size of provided file or directory. Command expects path as an argument.",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{

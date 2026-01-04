@@ -30,7 +30,7 @@ func RunPathSizeAction(_ context.Context, cmd *cli.Command) error {
 		return errors.Wrapf(err, "get path size of %s failed", filePath)
 	}
 
-	fmt.Println(filePath, "-", size) //nolint:all
+	fmt.Println(filePath, "-", size)
 
 	return nil
 }

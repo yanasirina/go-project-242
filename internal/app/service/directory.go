@@ -2,15 +2,17 @@ package service
 
 import (
 	"code/internal/pkg/errors"
-	"log"
 	"os"
 	"strings"
 )
 
 type Directory struct {
 	Path               string
-	Info               os.FileInfo
 	IncludeHiddenFiles bool
+}
+
+func NewDirectory(path string, includeHiddenFiles bool) *Directory {
+	return &Directory{Path: path, IncludeHiddenFiles: includeHiddenFiles}
 }
 
 func (dir Directory) GetSize() (int64, error) {
@@ -18,7 +20,7 @@ func (dir Directory) GetSize() (int64, error) {
 
 	files, err := os.ReadDir(dir.Path)
 	if err != nil {
-		log.Fatal(err)
+		return 0, errors.Wrapf(err, "failed to read directory %s", dir.Path)
 	}
 
 	for _, file := range files {
