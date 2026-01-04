@@ -1,6 +1,6 @@
 version: "2"
 run:
-  go: 1.24.7
+  go: 1.25.4
   modules-download-mode: vendor
 output:
   path-mode: abs
@@ -24,6 +24,7 @@ linters:
     - tagliatelle
     - containedctx
     - wsl
+    - depguard
   settings:
     revive:
       rules:
