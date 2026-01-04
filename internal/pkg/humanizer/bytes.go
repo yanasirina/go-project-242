@@ -20,10 +20,17 @@ func HumanizeBytes(s int64, base float64) string {
 	suffix := sizes[int(e)]
 	val := math.Floor(float64(s)/math.Pow(base, e)*10+0.5) / 10
 
-	f := "%.0%s"
+	var result string
+
 	if val < 10 {
-		f = "%.1f%s"
+		if val == float64(int64(val)) {
+			result = fmt.Sprintf("%.0f%s", val, suffix)
+		} else {
+			result = fmt.Sprintf("%.1f%s", val, suffix)
+		}
+	} else {
+		result = fmt.Sprintf("%.0f%s", val, suffix)
 	}
 
-	return fmt.Sprintf(f, val, suffix)
+	return result
 }

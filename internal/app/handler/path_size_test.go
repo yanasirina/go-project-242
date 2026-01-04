@@ -1,0 +1,277 @@
+package handler
+
+import (
+	"os"
+	"path/filepath"
+	"testing"
+
+	"github.com/stretchr/testify/require"
+)
+
+func TestPathSizeHandler(t *testing.T) {
+	tests := []struct {
+		name         string
+		setupPath    func() (string, func(), error)
+		arguments    CommandArguments
+		flags        CommandFlags
+		expectError  bool
+		validateSize func(*testing.T, int64)
+	}{
+		{
+			name: "get size of regular file",
+			setupPath: func() (string, func(), error) {
+				tempFile, err := os.CreateTemp(t.TempDir(), "test_file")
+				if err != nil {
+					return "", nil, err
+				}
+
+				content := []byte("Hello, World!")
+
+				_, err = tempFile.Write(content)
+				if err != nil {
+					tempFile.Close()
+					os.Remove(tempFile.Name())
+
+					return "", nil, err
+				}
+
+				tempFile.Close()
+
+				cleanup := func() {
+					os.Remove(tempFile.Name())
+				}
+
+				return tempFile.Name(), cleanup, nil
+			},
+			arguments:   CommandArguments{Path: ""},
+			flags:       CommandFlags{},
+			expectError: false,
+			validateSize: func(t *testing.T, size int64) {
+				t.Helper()
+				require.Equal(t, int64(13), size)
+			},
+		},
+		{
+			name: "get size of empty file",
+			setupPath: func() (string, func(), error) {
+				tempFile, err := os.CreateTemp(t.TempDir(), "test_file_empty")
+				if err != nil {
+					return "", nil, err
+				}
+
+				tempFile.Close()
+
+				cleanup := func() {
+					os.Remove(tempFile.Name())
+				}
+
+				return tempFile.Name(), cleanup, nil
+			},
+			arguments:   CommandArguments{Path: ""},
+			flags:       CommandFlags{},
+			expectError: false,
+			validateSize: func(t *testing.T, size int64) {
+				t.Helper()
+				require.Equal(t, int64(0), size)
+			},
+		},
+		{
+			name: "get size of directory",
+			setupPath: func() (string, func(), error) {
+				tempDir := t.TempDir()
+
+				testFile := filepath.Join(tempDir, "test.txt")
+				content := []byte("Hello, World!")
+
+				err := os.WriteFile(testFile, content, 0600)
+				if err != nil {
+					os.RemoveAll(tempDir)
+
+					return "", nil, err
+				}
+
+				cleanup := func() {
+					os.RemoveAll(tempDir)
+				}
+
+				return tempDir, cleanup, nil
+			},
+			arguments:   CommandArguments{Path: ""},
+			flags:       CommandFlags{},
+			expectError: false,
+			validateSize: func(t *testing.T, size int64) {
+				t.Helper()
+				require.Equal(t, int64(13), size)
+			},
+		},
+		{
+			name: "get size of empty directory",
+			setupPath: func() (string, func(), error) {
+				tempDir := t.TempDir()
+
+				cleanup := func() {
+					os.RemoveAll(tempDir)
+				}
+
+				return tempDir, cleanup, nil
+			},
+			arguments:   CommandArguments{Path: ""},
+			flags:       CommandFlags{},
+			expectError: false,
+			validateSize: func(t *testing.T, size int64) {
+				t.Helper()
+				require.Equal(t, int64(0), size)
+			},
+		},
+		{
+			name: "non-existent path",
+			setupPath: func() (string, func(), error) {
+				return "/non/existent/path", func() {}, nil
+			},
+			arguments:   CommandArguments{Path: ""},
+			flags:       CommandFlags{},
+			expectError: true,
+			validateSize: func(t *testing.T, size int64) {
+				t.Helper()
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path, cleanup, err := tt.setupPath()
+			require.NoError(t, err)
+
+			defer cleanup()
+
+			handler := PathSizeHandler{
+				Arguments: CommandArguments{Path: path},
+				Flags:     tt.flags,
+			}
+
+			size, err := handler.GetPathSize()
+
+			if tt.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				tt.validateSize(t, size)
+			}
+		})
+	}
+}
+
+//nolint:gocyclo
+func TestPathSizeHandlerGetFormatedSize(t *testing.T) {
+	tests := []struct {
+		name            string
+		setupPath       func() (string, func(), error)
+		flags           CommandFlags
+		expectedPattern string
+		expectError     bool
+	}{
+		{
+			name: "formatted size without human flag",
+			setupPath: func() (string, func(), error) {
+				tempFile, err := os.CreateTemp(t.TempDir(), "test_file_formatted")
+				if err != nil {
+					return "", nil, err
+				}
+
+				content := []byte("Test content for formatting")
+
+				_, err = tempFile.Write(content)
+				if err != nil {
+					tempFile.Close()
+					os.Remove(tempFile.Name())
+
+					return "", nil, err
+				}
+
+				tempFile.Close()
+
+				cleanup := func() {
+					os.Remove(tempFile.Name())
+				}
+
+				return tempFile.Name(), cleanup, nil
+			},
+			flags:           CommandFlags{HumanizeSize: false},
+			expectedPattern: "B",
+			expectError:     false,
+		},
+		{
+			name: "formatted size with human flag",
+			setupPath: func() (string, func(), error) {
+				tempFile, err := os.CreateTemp(t.TempDir(), "test_file_human")
+				if err != nil {
+					return "", nil, err
+				}
+
+				content := []byte("Test content")
+
+				_, err = tempFile.Write(content)
+				if err != nil {
+					tempFile.Close()
+					os.Remove(tempFile.Name())
+
+					return "", nil, err
+				}
+
+				tempFile.Close()
+
+				cleanup := func() {
+					os.Remove(tempFile.Name())
+				}
+
+				return tempFile.Name(), cleanup, nil
+			},
+			flags:           CommandFlags{HumanizeSize: true},
+			expectedPattern: "B",
+			expectError:     false,
+		},
+		{
+			name: "formatted size for zero-byte file with human flag",
+			setupPath: func() (string, func(), error) {
+				tempFile, err := os.CreateTemp(t.TempDir(), "test_file_zero")
+				if err != nil {
+					return "", nil, err
+				}
+
+				tempFile.Close()
+
+				cleanup := func() {
+					os.Remove(tempFile.Name())
+				}
+
+				return tempFile.Name(), cleanup, nil
+			},
+			flags:           CommandFlags{HumanizeSize: true},
+			expectedPattern: "0B",
+			expectError:     false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path, cleanup, err := tt.setupPath()
+			require.NoError(t, err)
+
+			defer cleanup()
+
+			handler := PathSizeHandler{
+				Arguments: CommandArguments{Path: path},
+				Flags:     tt.flags,
+			}
+
+			result, err := handler.GetFormatedSize()
+
+			if tt.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Contains(t, result, tt.expectedPattern)
+			}
+		})
+	}
+}
