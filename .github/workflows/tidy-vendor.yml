@@ -1,4 +1,4 @@
-name: tidy-vendor.yml
+name: tidy-vendor
 
 on:
   push:
