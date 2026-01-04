@@ -21,13 +21,13 @@ func NewPathSizeCLI() *PathSizeCLI {
 			&cli.BoolFlag{
 				Name:    actions.HumanFlagName,
 				Value:   false,
-				Usage:   "print human readable format",
+				Usage:   "human-readable sizes (auto-select unit)",
 				Aliases: []string{"H"},
 			},
 			&cli.BoolFlag{
 				Name:    actions.ShowAllFilesFlag,
 				Value:   false,
-				Usage:   "show all files (including hidden files)",
+				Usage:   "include hidden files and directories",
 				Aliases: []string{"a"},
 			},
 		},
