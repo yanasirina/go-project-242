@@ -25,6 +25,7 @@ linters:
     - containedctx
     - wsl
     - depguard
+    - gosec
   settings:
     revive:
       rules:

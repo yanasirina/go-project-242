@@ -15,8 +15,16 @@ type PathSizeCLI struct {
 
 func NewPathSizeCLI() *PathSizeCLI {
 	cmd := &cli.Command{
-		Name:   "Get Path Size",
-		Usage:  "Command is used to get size of provided file or directory. Command expects path as an argument.",
+		Name:  "Get Path Size",
+		Usage: "Command is used to get size of provided file or directory. Command expects path as an argument.",
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:    actions.HumanFlagName,
+				Value:   false,
+				Usage:   "print human readable format",
+				Aliases: []string{"H"},
+			},
+		},
 		Action: actions.PathSizeAction,
 	}
 

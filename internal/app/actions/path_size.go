@@ -4,23 +4,27 @@ import (
 	"code/internal/app/service"
 	"code/internal/pkg/errors"
 	"context"
-	"log/slog"
+	"fmt"
 
 	"github.com/urfave/cli/v3"
 )
 
-func PathSizeAction(ctx context.Context, cmd *cli.Command) error {
-	filename := cmd.Args().Get(0)
-	if filename == "" {
+const HumanFlagName = "human"
+
+func PathSizeAction(_ context.Context, cmd *cli.Command) error {
+	filePath := cmd.Args().Get(0)
+	if filePath == "" {
 		return ErrBadArguments
 	}
 
-	size, err := service.GetPathSize(filename)
+	size, err := service.GetPathSize(filePath)
 	if err != nil {
-		return errors.Wrapf(err, "get path size of %s failed", filename)
+		return errors.Wrapf(err, "get path size of %s failed", filePath)
 	}
 
-	slog.InfoContext(ctx, "Successfully got path size:", slog.Int64("size", size))
+	humanFlag := cmd.Bool(HumanFlagName)
+	formatedSize := formatSize(size, humanFlag)
+	fmt.Println(filePath, "-", formatedSize) //nolint:all
 
 	return nil
 }
