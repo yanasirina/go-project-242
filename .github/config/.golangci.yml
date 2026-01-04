@@ -27,6 +27,7 @@ linters:
     - depguard
     - mnd
     - forbidigo
+    - nolintlint
   settings:
     revive:
       rules:

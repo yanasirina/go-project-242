@@ -39,8 +39,8 @@ func TestFileGetSize(t *testing.T) {
 			tempFile, err := os.CreateTemp(t.TempDir(), "test_file")
 			require.NoError(t, err)
 
-			defer os.Remove(tempFile.Name())
-			defer tempFile.Close()
+			defer os.Remove(tempFile.Name()) //nolint:errcheck
+			defer tempFile.Close()           //nolint:errcheck
 
 			_, err = tempFile.Write(tt.content)
 			require.NoError(t, err)

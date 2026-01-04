@@ -148,7 +148,7 @@ func TestDirectoryGetSize(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tempDir := t.TempDir()
 
-			defer os.RemoveAll(tempDir)
+			defer os.RemoveAll(tempDir) //nolint:errcheck
 
 			err := tt.setupDir(tempDir)
 			require.NoError(t, err)

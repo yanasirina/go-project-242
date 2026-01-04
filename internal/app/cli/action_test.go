@@ -32,16 +32,16 @@ func TestRunPathSizeAction(t *testing.T) {
 
 				_, err = tempFile.Write(content)
 				if err != nil {
-					tempFile.Close()
-					os.Remove(tempFile.Name())
+					tempFile.Close()           //nolint:errcheck
+					os.Remove(tempFile.Name()) //nolint:errcheck
 
 					return "", nil, err
 				}
 
-				tempFile.Close()
+				tempFile.Close() //nolint:errcheck
 
 				cleanup := func() {
-					os.Remove(tempFile.Name())
+					os.Remove(tempFile.Name()) //nolint:errcheck
 				}
 
 				return tempFile.Name(), cleanup, nil
@@ -77,13 +77,13 @@ func TestRunPathSizeAction(t *testing.T) {
 
 				err := os.WriteFile(testFile, content, 0600)
 				if err != nil {
-					os.RemoveAll(tempDir)
+					os.RemoveAll(tempDir) //nolint:errcheck
 
 					return "", nil, err
 				}
 
 				cleanup := func() {
-					os.RemoveAll(tempDir)
+					os.RemoveAll(tempDir) //nolint:errcheck
 				}
 
 				return tempDir, cleanup, nil
@@ -120,7 +120,7 @@ func TestRunPathSizeAction(t *testing.T) {
 			os.Stdout = w
 			err = cmd.Run(context.Background(), args)
 
-			w.Close()
+			w.Close() //nolint: errcheck
 
 			os.Stdout = old
 
@@ -137,7 +137,7 @@ func TestRunPathSizeAction(t *testing.T) {
 func TestRunPathSizeActionWithFlags(t *testing.T) {
 	tempDir := t.TempDir()
 
-	defer os.RemoveAll(tempDir)
+	defer os.RemoveAll(tempDir) //nolint:errcheck
 
 	testFile := filepath.Join(tempDir, "test.txt")
 	content := []byte("Test content for CLI flags")
@@ -169,7 +169,7 @@ func TestRunPathSizeActionWithFlags(t *testing.T) {
 	err = cmd.Run(context.Background(), osArgs)
 	require.NoError(t, err)
 
-	w.Close()
+	w.Close() //nolint: errcheck
 
 	os.Stdout = old
 

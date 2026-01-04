@@ -29,16 +29,16 @@ func TestPathSizeHandler(t *testing.T) {
 
 				_, err = tempFile.Write(content)
 				if err != nil {
-					tempFile.Close()
-					os.Remove(tempFile.Name())
+					tempFile.Close()           //nolint:errcheck
+					os.Remove(tempFile.Name()) //nolint:errcheck
 
 					return "", nil, err
 				}
 
-				tempFile.Close()
+				tempFile.Close() //nolint:errcheck
 
 				cleanup := func() {
-					os.Remove(tempFile.Name())
+					os.Remove(tempFile.Name()) //nolint:errcheck
 				}
 
 				return tempFile.Name(), cleanup, nil
@@ -59,10 +59,10 @@ func TestPathSizeHandler(t *testing.T) {
 					return "", nil, err
 				}
 
-				tempFile.Close()
+				tempFile.Close() //nolint:errcheck
 
 				cleanup := func() {
-					os.Remove(tempFile.Name())
+					os.Remove(tempFile.Name()) //nolint:errcheck
 				}
 
 				return tempFile.Name(), cleanup, nil
@@ -85,13 +85,13 @@ func TestPathSizeHandler(t *testing.T) {
 
 				err := os.WriteFile(testFile, content, 0600)
 				if err != nil {
-					os.RemoveAll(tempDir)
+					os.RemoveAll(tempDir) //nolint:errcheck
 
 					return "", nil, err
 				}
 
 				cleanup := func() {
-					os.RemoveAll(tempDir)
+					os.RemoveAll(tempDir) //nolint:errcheck
 				}
 
 				return tempDir, cleanup, nil
@@ -110,7 +110,7 @@ func TestPathSizeHandler(t *testing.T) {
 				tempDir := t.TempDir()
 
 				cleanup := func() {
-					os.RemoveAll(tempDir)
+					os.RemoveAll(tempDir) //nolint:errcheck
 				}
 
 				return tempDir, cleanup, nil
@@ -182,16 +182,16 @@ func TestPathSizeHandlerGetFormatedSize(t *testing.T) {
 
 				_, err = tempFile.Write(content)
 				if err != nil {
-					tempFile.Close()
-					os.Remove(tempFile.Name())
+					tempFile.Close()           //nolint:errcheck
+					os.Remove(tempFile.Name()) //nolint:errcheck
 
 					return "", nil, err
 				}
 
-				tempFile.Close()
+				tempFile.Close() //nolint:errcheck
 
 				cleanup := func() {
-					os.Remove(tempFile.Name())
+					os.Remove(tempFile.Name()) //nolint:errcheck
 				}
 
 				return tempFile.Name(), cleanup, nil
@@ -212,16 +212,16 @@ func TestPathSizeHandlerGetFormatedSize(t *testing.T) {
 
 				_, err = tempFile.Write(content)
 				if err != nil {
-					tempFile.Close()
-					os.Remove(tempFile.Name())
+					tempFile.Close()           //nolint:errcheck
+					os.Remove(tempFile.Name()) //nolint:errcheck
 
 					return "", nil, err
 				}
 
-				tempFile.Close()
+				tempFile.Close() //nolint:errcheck
 
 				cleanup := func() {
-					os.Remove(tempFile.Name())
+					os.Remove(tempFile.Name()) //nolint:errcheck
 				}
 
 				return tempFile.Name(), cleanup, nil
@@ -238,10 +238,10 @@ func TestPathSizeHandlerGetFormatedSize(t *testing.T) {
 					return "", nil, err
 				}
 
-				tempFile.Close()
+				tempFile.Close() //nolint:errcheck
 
 				cleanup := func() {
-					os.Remove(tempFile.Name())
+					os.Remove(tempFile.Name()) //nolint:errcheck
 				}
 
 				return tempFile.Name(), cleanup, nil
