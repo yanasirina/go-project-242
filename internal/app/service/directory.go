@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/yanasirina/go-project-242/internal/pkg/errors"
+	"code/internal/pkg/errors"
 )
 
 type Directory struct {

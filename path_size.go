@@ -1,8 +1,8 @@
 package code
 
 import (
-	"github.com/yanasirina/go-project-242/internal/app/handler"
-	"github.com/yanasirina/go-project-242/internal/pkg/errors"
+	"code/internal/app/handler"
+	"code/internal/pkg/errors"
 )
 
 func GetPathSize(path string, recursive, human, all bool) (string, error) {

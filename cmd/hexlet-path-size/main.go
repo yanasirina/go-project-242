@@ -3,7 +3,7 @@ package main
 import (
 	"log/slog"
 
-	"github.com/yanasirina/go-project-242/internal/app/cli"
+	"code/internal/app/cli"
 )
 
 func main() {

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/yanasirina/go-project-242/internal/app/service"
-	"github.com/yanasirina/go-project-242/internal/pkg/errors"
-	"github.com/yanasirina/go-project-242/internal/pkg/humanizer"
+	"code/internal/app/service"
+	"code/internal/pkg/errors"
+	"code/internal/pkg/humanizer"
 )
 
 type Path interface {
