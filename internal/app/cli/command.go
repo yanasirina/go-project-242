@@ -4,7 +4,7 @@ import (
 	"context"
 	"os"
 
-	"code/internal/pkg/errors"
+	"github.com/yanasirina/go-project-242/internal/pkg/errors"
 
 	"github.com/urfave/cli/v3"
 )

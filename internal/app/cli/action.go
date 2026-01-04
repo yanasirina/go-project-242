@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"code/internal/app/handler"
-	"code/internal/pkg/errors"
+	"github.com/yanasirina/go-project-242/internal/app/handler"
+	"github.com/yanasirina/go-project-242/internal/pkg/errors"
 
 	"github.com/urfave/cli/v3"
 )
