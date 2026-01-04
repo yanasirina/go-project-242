@@ -1,10 +1,11 @@
 package cli
 
 import (
-	"code/internal/app/handler"
-	"code/internal/pkg/errors"
 	"context"
 	"fmt"
+
+	"code/internal/app/handler"
+	"code/internal/pkg/errors"
 
 	"github.com/urfave/cli/v3"
 )
@@ -22,6 +23,7 @@ func RunPathSizeAction(_ context.Context, cmd *cli.Command) error {
 		Flags: handler.CommandFlags{
 			HumanizeSize:    cmd.Bool(HumanFlagName),
 			ShowHiddenFiles: cmd.Bool(ShowAllFilesFlag),
+			Recursive:       cmd.Bool(RecursiveFlag),
 		},
 	}
 

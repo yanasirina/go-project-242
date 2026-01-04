@@ -1,11 +1,12 @@
 package handler
 
 import (
+	"fmt"
+	"os"
+
 	"code/internal/app/service"
 	"code/internal/pkg/errors"
 	"code/internal/pkg/humanizer"
-	"fmt"
-	"os"
 )
 
 type Path interface {
@@ -15,6 +16,7 @@ type Path interface {
 func (c PathSizeHandler) GetPath() (Path, error) {
 	path := c.Arguments.Path
 	includeHidden := c.Flags.ShowHiddenFiles
+	recursive := c.Flags.Recursive
 
 	pathInfo, err := os.Lstat(path)
 	if err != nil {
@@ -26,7 +28,7 @@ func (c PathSizeHandler) GetPath() (Path, error) {
 		return service.NewFile(pathInfo), nil
 
 	case mode.IsDir():
-		return service.NewDirectory(path, includeHidden), nil
+		return service.NewDirectory(path, includeHidden, recursive), nil
 	}
 
 	return nil, ErrBadPath

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"code/internal/app/cli"
 	"log/slog"
+
+	"code/internal/app/cli"
 )
 
 func main() {

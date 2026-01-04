@@ -1,9 +1,10 @@
 package cli
 
 import (
-	"code/internal/pkg/errors"
 	"context"
 	"os"
+
+	"code/internal/pkg/errors"
 
 	"github.com/urfave/cli/v3"
 )
@@ -11,6 +12,7 @@ import (
 const (
 	HumanFlagName    = "human"
 	ShowAllFilesFlag = "all"
+	RecursiveFlag    = "recursive"
 )
 
 func NewCLICommand() *cli.Command {
@@ -29,6 +31,12 @@ func NewCLICommand() *cli.Command {
 				Value:   false,
 				Usage:   "include hidden files and directories",
 				Aliases: []string{"a"},
+			},
+			&cli.BoolFlag{
+				Name:    RecursiveFlag,
+				Value:   false,
+				Usage:   "recursive size of directories",
+				Aliases: []string{"r"},
 			},
 		},
 		Action: RunPathSizeAction,
