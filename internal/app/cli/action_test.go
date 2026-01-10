@@ -68,6 +68,19 @@ func TestRunPathSizeAction(t *testing.T) {
 			},
 		},
 		{
+			name: "too many arguments provided",
+			setupPath: func() (string, func(), error) {
+				return "", func() {}, nil
+			},
+			args:        []string{"test", "arg1", "arg2"},
+			expectError: true,
+			validate: func(t *testing.T, output string, err error) {
+				t.Helper()
+				require.Error(t, err)
+				require.Contains(t, err.Error(), "command expects exactly one argument")
+			},
+		},
+		{
 			name: "valid directory path",
 			setupPath: func() (string, func(), error) {
 				tempDir := t.TempDir()
