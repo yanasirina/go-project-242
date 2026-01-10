@@ -1,11 +1,10 @@
 package service
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"code/internal/pkg/errors"
 )
 
 type Directory struct {
@@ -23,7 +22,7 @@ func (dir Directory) GetSize() (int64, error) {
 
 	files, err := os.ReadDir(dir.Path)
 	if err != nil {
-		return 0, errors.Wrapf(err, "failed to read directory %s", dir.Path)
+		return 0, fmt.Errorf("failed to read directory %s: %w", dir.Path, err)
 	}
 
 	for _, file := range files {
@@ -41,7 +40,7 @@ func (dir Directory) GetSize() (int64, error) {
 func (dir Directory) fileSize(file os.DirEntry) (int64, error) {
 	fileInfo, err := file.Info()
 	if err != nil {
-		return 0, errors.Wrapf(err, "failed to get file %s in %s", file, dir.Path)
+		return 0, fmt.Errorf("failed to get file %s in %s: %w", file, dir.Path, err)
 	}
 
 	if strings.HasPrefix(fileInfo.Name(), ".") && !dir.IncludeHiddenFiles {

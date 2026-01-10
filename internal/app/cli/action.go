@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"code"
-	"code/internal/pkg/errors"
 
 	"github.com/urfave/cli/v3"
 )
@@ -24,7 +23,7 @@ func RunPathSizeAction(_ context.Context, cmd *cli.Command) error {
 		cmd.Bool(ShowAllFilesFlag),
 	)
 	if err != nil {
-		return errors.Wrapf(err, "get path size of %s failed", filePath)
+		return fmt.Errorf("get path size of %s failed: %w", filePath, err)
 	}
 
 	fmt.Println(filePath, size)

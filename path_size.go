@@ -2,7 +2,7 @@ package code
 
 import (
 	"code/internal/app/handler"
-	"code/internal/pkg/errors"
+	"fmt"
 )
 
 func GetPathSize(path string, recursive, human, all bool) (string, error) {
@@ -19,7 +19,7 @@ func GetPathSize(path string, recursive, human, all bool) (string, error) {
 
 	size, err := pathSizeHandler.GetFormatedSize()
 	if err != nil {
-		return "", errors.Wrapf(err, "get formated size of %s failed", path)
+		return "", fmt.Errorf("get formated size of %s failed: %w", path, err)
 	}
 
 	return size, nil

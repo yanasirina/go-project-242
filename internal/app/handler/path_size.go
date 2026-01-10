@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"code/internal/app/service"
-	"code/internal/pkg/errors"
 	"code/internal/pkg/humanizer"
 )
 
@@ -20,7 +19,7 @@ func (c PathSizeHandler) GetPath() (Path, error) {
 
 	pathInfo, err := os.Lstat(path)
 	if err != nil {
-		return nil, errors.Wrapf(err, "failed to lstat %s", path)
+		return nil, fmt.Errorf("failed to lstat %s: %w", path, err)
 	}
 
 	switch mode := pathInfo.Mode(); {
@@ -39,12 +38,12 @@ func (c PathSizeHandler) GetPathSize() (int64, error) {
 
 	pathInfo, err := c.GetPath()
 	if err != nil {
-		return 0, errors.Wrapf(err, "failed to get path %s", path)
+		return 0, fmt.Errorf("failed to get path %s: %w", path, err)
 	}
 
 	size, err := pathInfo.GetSize()
 	if err != nil {
-		return 0, errors.Wrapf(err, "failed to get size of %s", path)
+		return 0, fmt.Errorf("failed to get size of %s: %w", path, err)
 	}
 
 	return size, nil
@@ -53,7 +52,7 @@ func (c PathSizeHandler) GetPathSize() (int64, error) {
 func (c PathSizeHandler) GetFormatedSize() (string, error) {
 	size, err := c.GetPathSize()
 	if err != nil {
-		return "", errors.Wrap(err, "failed to get size")
+		return "", fmt.Errorf("failed to get size: %w", err)
 	}
 
 	if c.Flags.HumanizeSize {

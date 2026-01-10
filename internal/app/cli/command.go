@@ -2,9 +2,8 @@ package cli
 
 import (
 	"context"
+	"fmt"
 	"os"
-
-	"code/internal/pkg/errors"
 
 	"github.com/urfave/cli/v3"
 )
@@ -47,7 +46,7 @@ func NewCLICommand() *cli.Command {
 
 func RunCMD(c *cli.Command) error {
 	if err := c.Run(context.Background(), os.Args); err != nil {
-		return errors.Wrap(err, "failed to run command")
+		return fmt.Errorf("failed to run command: %w", err)
 	}
 
 	return nil

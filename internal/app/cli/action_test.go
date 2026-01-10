@@ -64,7 +64,7 @@ func TestRunPathSizeAction(t *testing.T) {
 			validate: func(t *testing.T, output string, err error) {
 				t.Helper()
 				require.Error(t, err)
-				require.Contains(t, err.Error(), "required arguments are missing")
+				require.Contains(t, err.Error(), "command expects exactly one argument")
 			},
 		},
 		{
