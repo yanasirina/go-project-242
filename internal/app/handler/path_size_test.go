@@ -218,27 +218,27 @@ func TestPathSizeHandler_SymLinks(t *testing.T) {
 
 				_, err = tempFile.Write(content)
 				if err != nil {
-					tempFile.Close()
-					os.Remove(tempFile.Name())
+					tempFile.Close()           //nolint:errcheck
+					os.Remove(tempFile.Name()) //nolint:errcheck
 
 					return "", nil, err
 				}
 
-				tempFile.Close()
+				tempFile.Close() //nolint:errcheck
 
 				tempDir := t.TempDir()
 				symlinkPath := filepath.Join(tempDir, "symlink_to_file")
 
 				err = os.Symlink(tempFile.Name(), symlinkPath)
 				if err != nil {
-					os.Remove(tempFile.Name())
+					os.Remove(tempFile.Name()) //nolint:errcheck
 
 					return "", nil, err
 				}
 
 				cleanup := func() {
-					os.Remove(symlinkPath)
-					os.Remove(tempFile.Name())
+					os.Remove(symlinkPath)     //nolint:errcheck
+					os.Remove(tempFile.Name()) //nolint:errcheck
 				}
 
 				return symlinkPath, cleanup, nil
@@ -269,14 +269,14 @@ func TestPathSizeHandler_SymLinks(t *testing.T) {
 
 				err = os.Symlink(tempDir, symlinkPath)
 				if err != nil {
-					os.RemoveAll(tempDir)
+					os.RemoveAll(tempDir) //nolint:errcheck
 
 					return "", nil, err
 				}
 
 				cleanup := func() {
-					os.Remove(symlinkPath)
-					os.RemoveAll(tempDir)
+					os.Remove(symlinkPath) //nolint:errcheck
+					os.RemoveAll(tempDir)  //nolint:errcheck
 				}
 
 				return symlinkPath, cleanup, nil
@@ -303,7 +303,7 @@ func TestPathSizeHandler_SymLinks(t *testing.T) {
 				}
 
 				cleanup := func() {
-					os.Remove(brokenSymlinkPath)
+					os.Remove(brokenSymlinkPath) //nolint:errcheck
 				}
 
 				return brokenSymlinkPath, cleanup, nil
