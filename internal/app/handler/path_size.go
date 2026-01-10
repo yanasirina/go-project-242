@@ -22,11 +22,10 @@ func (c PathSizeHandler) GetPath() (Path, error) {
 		return nil, fmt.Errorf("failed to lstat %s: %w", path, err)
 	}
 
-	switch mode := pathInfo.Mode(); {
-	case mode.IsRegular():
+	mode := pathInfo.Mode()
+	if mode.IsRegular() {
 		return service.NewFile(pathInfo), nil
-
-	case mode.IsDir():
+	} else if mode.IsDir() {
 		return service.NewDirectory(path, includeHidden, recursive), nil
 	}
 
