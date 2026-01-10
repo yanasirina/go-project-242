@@ -57,7 +57,7 @@ func (c PathSizeHandler) GetFormatedSize() (string, error) {
 	}
 
 	if c.Flags.HumanizeSize {
-		return humanizer.HumanizeBytes(size, 1000), nil
+		return humanizer.HumanizeBytes(size, 1024), nil
 	} else {
 		return fmt.Sprintf("%dB", size), nil
 	}
