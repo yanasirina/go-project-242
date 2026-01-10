@@ -23,13 +23,11 @@ func (c PathSizeHandler) GetPath() (Path, error) {
 	}
 
 	mode := pathInfo.Mode()
-	if mode.IsRegular() {
-		return service.NewFile(pathInfo), nil
-	} else if mode.IsDir() {
+	if mode.IsDir() {
 		return service.NewDirectory(path, includeHidden, recursive), nil
 	}
 
-	return nil, ErrBadPath
+	return service.NewFile(pathInfo), nil
 }
 
 func (c PathSizeHandler) GetPathSize() (int64, error) {

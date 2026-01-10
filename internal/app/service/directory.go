@@ -47,11 +47,11 @@ func (dir Directory) fileSize(file os.DirEntry) (int64, error) {
 		return 0, nil
 	}
 
-	if fileInfo.Mode().IsRegular() {
+	if !fileInfo.IsDir() {
 		return fileInfo.Size(), nil
 	}
 
-	if dir.Recursive && fileInfo.IsDir() {
+	if dir.Recursive {
 		recDirPath := filepath.Join(dir.Path, fileInfo.Name())
 		recDir := NewDirectory(recDirPath, dir.IncludeHiddenFiles, dir.Recursive)
 
