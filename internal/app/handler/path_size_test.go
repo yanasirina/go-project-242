@@ -76,6 +76,53 @@ func TestPathSizeHandler(t *testing.T) {
 			},
 		},
 		{
+			name: "non-existent path",
+			setupPath: func() (string, func(), error) {
+				return "/non/existent/path", func() {}, nil
+			},
+			arguments:   CommandArguments{Path: ""},
+			flags:       CommandFlags{},
+			expectError: true,
+			validateSize: func(t *testing.T, size int64) {
+				t.Helper()
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path, cleanup, err := tt.setupPath()
+			require.NoError(t, err)
+
+			defer cleanup()
+
+			handler := PathSizeHandler{
+				Arguments: CommandArguments{Path: path},
+				Flags:     tt.flags,
+			}
+
+			size, err := handler.GetPathSize()
+
+			if tt.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				tt.validateSize(t, size)
+			}
+		})
+	}
+}
+
+func TestPathSizeHandler_Dirs(t *testing.T) {
+	tests := []struct {
+		name         string
+		setupPath    func() (string, func(), error)
+		arguments    CommandArguments
+		flags        CommandFlags
+		expectError  bool
+		validateSize func(*testing.T, int64)
+	}{
+		{
 			name: "get size of directory",
 			setupPath: func() (string, func(), error) {
 				tempDir := t.TempDir()
@@ -123,16 +170,150 @@ func TestPathSizeHandler(t *testing.T) {
 				require.Equal(t, int64(0), size)
 			},
 		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path, cleanup, err := tt.setupPath()
+			require.NoError(t, err)
+
+			defer cleanup()
+
+			handler := PathSizeHandler{
+				Arguments: CommandArguments{Path: path},
+				Flags:     tt.flags,
+			}
+
+			size, err := handler.GetPathSize()
+
+			if tt.expectError {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				tt.validateSize(t, size)
+			}
+		})
+	}
+}
+
+//nolint:gocyclo
+func TestPathSizeHandler_SymLinks(t *testing.T) {
+	tests := []struct {
+		name         string
+		setupPath    func() (string, func(), error)
+		arguments    CommandArguments
+		flags        CommandFlags
+		expectError  bool
+		validateSize func(*testing.T, int64)
+	}{
 		{
-			name: "non-existent path",
+			name: "symbolic link to file",
 			setupPath: func() (string, func(), error) {
-				return "/non/existent/path", func() {}, nil
+				tempFile, err := os.CreateTemp(t.TempDir(), "target_file")
+				if err != nil {
+					return "", nil, err
+				}
+
+				content := []byte("Hello, Symbolic Link!")
+
+				_, err = tempFile.Write(content)
+				if err != nil {
+					tempFile.Close()
+					os.Remove(tempFile.Name())
+
+					return "", nil, err
+				}
+
+				tempFile.Close()
+
+				tempDir := t.TempDir()
+				symlinkPath := filepath.Join(tempDir, "symlink_to_file")
+
+				err = os.Symlink(tempFile.Name(), symlinkPath)
+				if err != nil {
+					os.Remove(tempFile.Name())
+
+					return "", nil, err
+				}
+
+				cleanup := func() {
+					os.Remove(symlinkPath)
+					os.Remove(tempFile.Name())
+				}
+
+				return symlinkPath, cleanup, nil
 			},
 			arguments:   CommandArguments{Path: ""},
 			flags:       CommandFlags{},
-			expectError: true,
+			expectError: false,
 			validateSize: func(t *testing.T, size int64) {
 				t.Helper()
+				require.Positive(t, size, "Symbolic link size should be greater than 0 (length of target path)")
+			},
+		},
+		{
+			name: "symbolic link to directory",
+			setupPath: func() (string, func(), error) {
+				tempDir := t.TempDir()
+				testFile := filepath.Join(tempDir, "test.txt")
+				content := []byte("Hello from linked directory!")
+
+				err := os.WriteFile(testFile, content, 0600)
+				if err != nil {
+					return "", nil, err
+				}
+
+				parentDir := t.TempDir()
+
+				symlinkPath := filepath.Join(parentDir, "symlink_to_dir")
+
+				err = os.Symlink(tempDir, symlinkPath)
+				if err != nil {
+					os.RemoveAll(tempDir)
+
+					return "", nil, err
+				}
+
+				cleanup := func() {
+					os.Remove(symlinkPath)
+					os.RemoveAll(tempDir)
+				}
+
+				return symlinkPath, cleanup, nil
+			},
+			arguments:   CommandArguments{Path: ""},
+			flags:       CommandFlags{},
+			expectError: false,
+			validateSize: func(t *testing.T, size int64) {
+				t.Helper()
+				require.Positive(t, size, "Symbolic link size should be greater than 0 (length of target path)")
+			},
+		},
+		{
+			name: "broken symbolic link",
+			setupPath: func() (string, func(), error) {
+				tempDir := t.TempDir()
+
+				brokenSymlinkPath := filepath.Join(tempDir, "broken_symlink")
+				targetPath := filepath.Join(tempDir, "non_existent_target")
+
+				err := os.Symlink(targetPath, brokenSymlinkPath)
+				if err != nil {
+					return "", nil, err
+				}
+
+				cleanup := func() {
+					os.Remove(brokenSymlinkPath)
+				}
+
+				return brokenSymlinkPath, cleanup, nil
+			},
+			arguments:   CommandArguments{Path: ""},
+			flags:       CommandFlags{},
+			expectError: false,
+			validateSize: func(t *testing.T, size int64) {
+				t.Helper()
+				require.Positive(t, size, "Broken symbolic link size should be greater than 0 (length of target path)")
 			},
 		},
 	}
