@@ -2,4 +2,4 @@ package cli
 
 import "errors"
 
-var ErrBadArguments = errors.New("required arguments are missing")
+var ErrBadArguments = errors.New("command expects exactly one argument")

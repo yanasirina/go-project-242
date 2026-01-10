@@ -11,10 +11,11 @@ import (
 )
 
 func RunPathSizeAction(_ context.Context, cmd *cli.Command) error {
-	filePath := cmd.Args().Get(0)
-	if filePath == "" {
+	if cmd.Args().Len() != 1 {
 		return ErrBadArguments
 	}
+
+	filePath := cmd.Args().Get(0)
 
 	size, err := code.GetPathSize(
 		filePath,
